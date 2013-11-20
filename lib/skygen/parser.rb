@@ -5,7 +5,7 @@ module Parser
   AssignSymbol = /(?:->|::=)/
   Probability = /\.[0-9]+/
   def self.parse(grammars)
-    binding.pry
+    # binding.pry
     parsed_grammars = []
     begin
       grammars.each do |g|

@@ -1,6 +1,6 @@
 Grammar1:
   S -> B .4
-  S ::= S r S
+  S ::= S r S .6
   B -> r B
   B -> B r
   B -> u B d

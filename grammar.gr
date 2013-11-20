@@ -1,0 +1,19 @@
+Grammar1:
+  S -> B .4
+  S ::= S r S
+  B -> r B
+  B -> B r
+  B -> u B d
+  B -> r
+end
+
+Grammar2:
+  S -> B
+  S -> S r S
+  B -> r B
+  B -> B r
+  B -> u B d
+  B -> ur B dr
+  B -> r
+  B -> E
+end

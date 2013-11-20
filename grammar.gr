@@ -1,10 +1,10 @@
 Grammar1:
-  S -> B .4
-  S ::= S r S .6
-  B -> r B
-  B -> B r
+  S -> B .1
+  S ::= S r S .2
+  B -> r B 
+  B -> B r 
   B -> u B d
-  B -> r
+  B -> r 
 end
 
 Grammar2:

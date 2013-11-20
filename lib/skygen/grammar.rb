@@ -28,8 +28,13 @@ class Grammar
     number_of_rules = @rules.size
     number_of_rules_without_probability = count_simple_rules 
     probability_left = 1 - count_acc_probability
-    if probability_left < 0
-      raise ArgumentError, "The sum of probabilities can't exceed 1"
+    if probability_left < 0 
+      puts "In #{@name}: The sum of probabilities can't exceed 1."
+      abort
+    elsif probability_left <= 0 and 
+          number_of_rules_without_probability != 0
+      puts "In #{@name}: No probability left to assign."
+      abort
     end
     assign_probabilites(
         probability_left*1.0 / number_of_rules_without_probability)

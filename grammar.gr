@@ -15,5 +15,5 @@ Grammar2:
   B -> u B d
   B -> ur B dr
   B -> r
-  B -> E
+  B -> e
 end

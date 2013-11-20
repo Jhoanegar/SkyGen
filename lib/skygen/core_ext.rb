@@ -3,3 +3,9 @@ class String
     self[0..(-1-n)]
   end
 end
+
+class Array
+  def add(new_item)
+    self << new_item unless self.include? new_item
+  end
+end

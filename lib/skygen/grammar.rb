@@ -1,6 +1,6 @@
 class Grammar
 
-  attr_accessor :name, :rules
+  attr_accessor :name, :rules, :nt_symbols, :t_symbols, :start_symbol
 
   def initialize(name,rules)
     @name = name

@@ -7,7 +7,6 @@ require 'pp'
 
 opt = OptParse.config_object(ARGV)
 grammars = Parser.parse(opt.grammars)
-int = Interpreter.new(grammars)
-puts int.print_grammar('Grammar1')
+int = Interpreter.new(grammars,opt)
 # int.run
 

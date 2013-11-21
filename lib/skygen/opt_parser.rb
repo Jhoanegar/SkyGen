@@ -5,6 +5,8 @@ class OptParse
   def self.parse(args)
     options = OpenStruct.new
     options.grammars = ['./grammar.gr']
+    options.grammar = nil
+    options.complexity = nil
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage: #{__FILE__} [CONFIG]"
 

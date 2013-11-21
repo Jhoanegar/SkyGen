@@ -25,7 +25,6 @@ class Grammar
   end
 
   def set_probabilites! 
-    number_of_rules = @rules.size
     number_of_rules_without_probability = count_simple_rules 
     probability_left = 1 - count_acc_probability
     if probability_left < 0 

@@ -2,12 +2,24 @@ require 'curses'
 require 'pry'
 class Interpreter
   include Curses
-
+  #Complexities
   EASY = 1
   NORMAL = 2
   COMPLEX = 3
   AUTO = 4
-
+  #Characters
+  @@characters = {
+    :l => "\u2190",
+    :u => "\u2191",
+    :r => "\u2192",
+    :d => "\u2193",
+    :ne => "\u2197",
+      :ru => "\u2197",
+      :ur => "\u2197",
+    :se => "\u2198",
+      :dr => "\u2198",
+      :rd => "\u2198"
+  }
   def initialize(grammars,options)
     @grammars = grammars
     @grammar = get_grammar(options.grammar)
@@ -16,9 +28,13 @@ class Interpreter
 
   def run 
     display_setup
+    # sky = generate_skyline
   end
 
-
+  def generate_skyline
+    
+  end
+  
   def display_setup
     init_screen
       move_print 1,2, "You've selected:"

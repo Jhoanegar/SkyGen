@@ -9,6 +9,7 @@ class Grammar
     @nt_symbols = get_not_terminal_symbols
     @t_symbols = get_terminal_symbols
     @start_symbol = @rules[0][:symbol]
+    @terminal_rules = get_terminal_rules
   end
 
   def set_rules(arr_rules)
@@ -72,5 +73,21 @@ class Grammar
       end
     end
     ts
+  end
+
+  def get_terminal_rules
+    tr = []
+    @rules.each do |rule|
+      nt_symbols = 
+          rule[:body].select{|symbol| symbol.is_a? Symbol}.size
+      tr << rule if nt_symbols == 0
+    end
+    if tr.size = 0
+      print "A grammar must have at least one terminal rule.\n"
+      puts "'#{self.name}' has none."
+      abort
+    end
+    tr
+    
   end
 end

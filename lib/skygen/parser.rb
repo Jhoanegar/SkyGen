@@ -1,5 +1,6 @@
 require 'pry'
 module Parser
+  #Types of symbols
   NTSymbol = /[A-Z]+/
   TSymbol = /[a-z]+/
   AssignSymbol = /(?:->|::=)/

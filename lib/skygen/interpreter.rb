@@ -1,7 +1,8 @@
 require 'curses'
-require 'pry'
+require 'tree'
 class Interpreter
   include Curses
+  include Tree
   #Complexities
   EASY = 1
   NORMAL = 2
@@ -24,15 +25,32 @@ class Interpreter
     @grammars = grammars
     @grammar = get_grammar(options.grammar)
     @complexity = options.complexity || get_complexity
+    @probabilites = nil
   end
 
   def run 
     display_setup
-    # sky = generate_skyline
+    sky = generate_skyline
   end
 
   def generate_skyline
-    
+    @probabilites = get_probabilites 
+    #choose starting play
+    #create tree
+    #choose next 15
+    15.times do 
+      index = pick_random_index
+    end
+  end
+  
+  def pick_random_index
+    random = Random.rand
+    index = 0
+    loop do
+      break if random <= @probabilites[index]
+      index += 1
+    end
+    index + 1
   end
   
   def display_setup
@@ -60,7 +78,7 @@ class Interpreter
     close_screen 
     loop do
       @grammars.each do |g|
-        if print_grammar(g.name).downcase == 's'
+        if print_grammar(g.name) == 's'
           return g
         end
       end
@@ -146,5 +164,15 @@ class Interpreter
         return c.to_s.capitalize
       end
     end
+  end
+
+  def get_probabilites
+    acc = 0
+    ret = []
+    @grammar.rules.each do |rule| 
+      ret << (rule[:probability] + acc)
+      acc += rule[:probability]
+    end
+    ret
   end
 end

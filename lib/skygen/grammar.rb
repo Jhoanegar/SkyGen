@@ -1,6 +1,7 @@
 class Grammar
 
-  attr_accessor :name, :rules, :nt_symbols, :t_symbols, :start_symbol
+  attr_accessor :name, :rules, :nt_symbols, :t_symbols, :start_symbol,
+                :terminal_rules, :start_rules
 
   def initialize(name,rules)
     @name = name
@@ -10,6 +11,7 @@ class Grammar
     @t_symbols = get_terminal_symbols
     @start_symbol = @rules[0][:symbol]
     @terminal_rules = get_terminal_rules
+    @start_rules = get_starting_rules
   end
 
   def set_rules(arr_rules)
@@ -82,12 +84,18 @@ class Grammar
           rule[:body].select{|symbol| symbol.is_a? Symbol}.size
       tr << rule if nt_symbols == 0
     end
-    if tr.size = 0
+    if tr.size == 0
       print "A grammar must have at least one terminal rule.\n"
       puts "'#{self.name}' has none."
       abort
     end
     tr
-    
+  end
+
+  def get_starting_rules
+    sr = []
+    @rules.each do |rule|
+      sr << rule if rule[:symbol] == @start_symbol  
+    end
   end
 end

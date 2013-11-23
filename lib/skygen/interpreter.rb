@@ -36,21 +36,32 @@ class Interpreter
   def generate_skyline
     @probabilites = get_probabilites 
     #choose starting play
+    binding.pry
     #create tree
     #choose next 15
+    a = pick_random_index {|index| index < @grammar.start_rules.size}
     15.times do 
       index = pick_random_index
     end
   end
   
-  def pick_random_index
-    random = Random.rand
+  def pick_random_index(&block)
+    block ||= Proc.new {true}
+    passed = false
     index = 0
     loop do
-      break if random <= @probabilites[index]
-      index += 1
+      random = Random.rand
+      index = 0
+      loop do
+        if random <= @probabilites[index] and block.call(index)
+          passed = true
+          break
+        end
+        index += 1
+      end
+      break if passed
     end
-    index + 1
+    index 
   end
   
   def display_setup

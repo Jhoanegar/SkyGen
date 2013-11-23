@@ -93,9 +93,11 @@ class Grammar
   end
 
   def get_starting_rules
+    binding.pry
     sr = []
     @rules.each do |rule|
-      sr << rule if rule[:symbol] == @start_symbol  
+      sr << rule if rule[:symbol] == @start_symbol
     end
+    sr
   end
 end

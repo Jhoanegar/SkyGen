@@ -7,6 +7,7 @@ class Grammar
     @name = name
     @rules = set_rules(rules)
     set_probabilites!
+    @rules = convert_to_objects
     @nt_symbols = get_not_terminal_symbols
     @t_symbols = get_terminal_symbols
     @start_symbol = @rules[0][:symbol]
@@ -20,8 +21,9 @@ class Grammar
       temp_rule = Hash.new(0)
       temp_rule[:id] = new_rules.size + 1
       temp_rule[:symbol] = rule.shift
-      temp_rule[:probability]= rule.pop if rule.last.is_a? Float
+      temp_rule[:probability] = rule.last.is_a?(Float) ? rule.pop : 0 
       temp_rule[:body] = rule 
+
       new_rules << temp_rule
     end
     new_rules
@@ -98,5 +100,13 @@ class Grammar
       sr << rule if rule[:symbol] == @start_symbol
     end
     sr
+  end
+
+  def convert_to_objects
+    temp = [] 
+    @rules.each do |rule|
+      temp << Rule.new(rule)
+    end 
+    temp
   end
 end

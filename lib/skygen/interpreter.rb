@@ -36,15 +36,32 @@ class Interpreter
   def generate_skyline
     @probabilites = get_probabilites 
     #choose starting play
-    binding.pry
     #create tree
-    #choose next 15
     index = pick_random_index {|i| i < @grammar.start_rules.size}
     root_rule = @grammar.rules[index]
     root_node = ParseNode.new(root_rule)
-    15.times do 
-      index = pick_random_index
+    #choose next 15
+    #It's not that simple, you have to check how many not terminal
+    #symbols every leaf has, call it x, then you should append
+    #x childs to the given node. It's not that hard buy it's not
+    #trivial.
+    count = 0
+    1.times do 
+      root_node.each_nt_node do |node|
+        index = pick_random_index {|i| node.name == 
+                                 @grammar.rules[i].symbol}
+        node << ParseNode.new(@grammar.rules[index])
+        count += 1
+        break if count == 10
+      end
     end
+    #Close open leafs
+    root_node.each_nt_node do |node|
+      index = Random.rand(0..@grammar.terminal_rules.size-1)
+      node << ParseNode.new(@grammar.terminal_rules[index])
+    end
+
+    binding.pry
   end
   
   def pick_random_index(&block)

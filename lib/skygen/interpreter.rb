@@ -39,7 +39,9 @@ class Interpreter
     binding.pry
     #create tree
     #choose next 15
-    a = pick_random_index {|index| index < @grammar.start_rules.size}
+    index = pick_random_index {|i| i < @grammar.start_rules.size}
+    root_rule = @grammar.rules[index]
+    root_node = ParseNode.new(root_rule)
     15.times do 
       index = pick_random_index
     end
@@ -52,7 +54,7 @@ class Interpreter
     loop do
       random = Random.rand
       index = 0
-      loop do
+      until index == @probabilites.size
         if random <= @probabilites[index] and block.call(index)
           passed = true
           break
@@ -83,7 +85,7 @@ class Interpreter
     end
     init_screen
       clear
-      move_print 2,5, "No grammar selected, select one of the following #{@grammars.size}."
+      move_print 2,5, "No grammar selected, #{@grammars.size} available."
       refresh
       wait
     close_screen 

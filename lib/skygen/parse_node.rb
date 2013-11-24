@@ -1,7 +1,6 @@
 class ParseNode < Tree::TreeNode
   def initialize(rule)
-    raise ArgumentError unless rule.respond_to? :symbol and 
-                        rule.respond_to? :body
+    raise ArgumentError unless rule.respond_to? :body
     super rule[:symbol],rule[:body]
   end
 

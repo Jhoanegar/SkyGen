@@ -33,35 +33,44 @@ class Interpreter
     sky = generate_skyline
   end
 
+  def create_tree(root_rule)
+    tree_root = TreeNode.new(root_rule.symbol)
+    root_rule.body.each {|element| tree_root << TreeNode.new(element)}
+    return tree_root
+  end
   def generate_skyline
     @probabilites = get_probabilites 
+    nt_nodes_only = Proc.new {|n| n.name.is_a? Symbol}
     #choose starting play
     #create tree
     index = pick_random_index {|i| i < @grammar.start_rules.size}
-    root_rule = @grammar.rules[index]
-    root_node = ParseNode.new(root_rule)
+    root_node = create_tree(@grammar.rules[index])
     #choose next 15
     #It's not that simple, you have to check how many not terminal
     #symbols every leaf has, call it x, then you should append
     #x childs to the given node. It's not that hard buy it's not
     #trivial.
     count = 0
+    original_tree = root_node.dup
+    temp_tree = root_node.dup
     1.times do 
-      root_node.each_nt_node do |node|
+      root_node.each(nt_nodes_only) do |node|
+        next if node == root_node
         index = pick_random_index {|i| node.name == 
                                  @grammar.rules[i].symbol}
-        node << ParseNode.new(@grammar.rules[index])
+        binding.pry
+        node << create_tree(@grammar.rules[index])
         count += 1
         break if count == 10
       end
     end
     #Close open leafs
-    root_node.each_nt_node do |node|
+    root_node.each do |node|
+      next if node == root_node
       index = Random.rand(0..@grammar.terminal_rules.size-1)
       node << ParseNode.new(@grammar.terminal_rules[index])
     end
-
-    binding.pry
+    root_node.print_tree
   end
   
   def pick_random_index(&block)
@@ -80,7 +89,7 @@ class Interpreter
       end
       break if passed
     end
-    index 
+    index - 1
   end
   
   def display_setup
@@ -198,7 +207,7 @@ class Interpreter
 
   def get_probabilites
     acc = 0
-    ret = []
+    ret = [0]
     @grammar.rules.each do |rule| 
       ret << (rule[:probability] + acc)
       acc += rule[:probability]

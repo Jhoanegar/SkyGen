@@ -33,9 +33,9 @@ class Interpreter
     sky = generate_skyline
   end
 
-  def create_tree(root_rule)
-    tree_root = TreeNode.new(root_rule.symbol)
-    root_rule.body.each {|element| tree_root << TreeNode.new(element)}
+  def create_tree(rule)
+    tree_root = TreeNode.new(rule.symbol,rule.id)
+    rule.body.each {|element| tree_root << TreeNode.new(element,rule.id)}
     return tree_root
   end
   def generate_skyline
@@ -48,44 +48,44 @@ class Interpreter
     #choose next 15
     #It's not that simple, you have to check how many not terminal
     #symbols every leaf has, call it x, then you should append
-    #x childs to the given node. It's not that hard buy it's not
+    #x childs to the given node. It's not that hard but it's not
     #trivial.
     count = 0
-    original_tree = root_node.dup
-    temp_tree = root_node.dup
-    1.times do 
+    10.times do 
       root_node.each(nt_nodes_only) do |node|
         next if node == root_node
         index = pick_random_index {|i| node.name == 
                                  @grammar.rules[i].symbol}
-        binding.pry
         node << create_tree(@grammar.rules[index])
         count += 1
         break if count == 10
       end
     end
     #Close open leafs
-    root_node.each do |node|
-      next if node == root_node
-      index = Random.rand(0..@grammar.terminal_rules.size-1)
-      node << ParseNode.new(@grammar.terminal_rules[index])
-    end
+    # root_node.each_leaf do |node|
+    #   next if node == root_node
+    #   index = Random.rand(0..@grammar.terminal_rules.size-1)
+    #   node << create_tree(@grammar.terminal_rules[index])
+    # end
     root_node.print_tree
+    binding.pry
   end
   
   def pick_random_index(&block)
     block ||= Proc.new {true}
     passed = false
     index = 0
-    loop do
+        # binding.pry
+    loop do 
       random = Random.rand
       index = 0
-      until index == @probabilites.size
-        if random <= @probabilites[index] and block.call(index)
-          passed = true
+      loop do
+        if random <= @probabilites[index] 
+          passed = true if block.call(index)
           break
         end
         index += 1
+        break if index == @probabilites.size - 1
       end
       break if passed
     end

@@ -34,6 +34,7 @@ class Interpreter
     @grammar = get_grammar(options.grammar)
     @complexity = options.complexity || get_complexity
     @probabilites = nil
+    @skyline_rules = []
   end
 
   def run 
@@ -60,6 +61,7 @@ class Interpreter
   end
 
   def generate_skyline
+    @skyline_rules = []
     @probabilites = get_probabilites 
     nt_leafs_only = Proc.new {|n| n.name.is_a? Symbol and n.is_leaf?}
     #choose starting play
@@ -73,6 +75,7 @@ class Interpreter
         index = pick_random_index {|i| node.name == 
                                  @grammar.rules[i].symbol}
         node << create_tree(@grammar.rules[index])
+        @skyline_rules << @grammar.rules[index].id
       end
     end
     #Close open leafs
@@ -80,6 +83,7 @@ class Interpreter
       next if node == root_node
       index = Random.rand(0..@grammar.terminal_rules.size-1)
       node << create_tree(@grammar.terminal_rules[index])
+      @skyline_rules << @grammar.rules[index].id
     end
     root_node
   end
@@ -232,6 +236,8 @@ class Interpreter
     last_char = nil
     tree = str.split
     init_screen
+        setpos 2,0 ; addstr "String: " + str
+        setpos 2+(str.size / cols),0 ; addstr "Rules: " + @skyline_rules.join(" ")
         row = lines - 2
         col = 0
       tree.each do |char|

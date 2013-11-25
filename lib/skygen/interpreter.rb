@@ -9,17 +9,24 @@ class Interpreter
   COMPLEX = 3
   AUTO = 4
   #Characters
-  @@characters = {
-    :l => "\u2190",
-    :u => "\u2191",
-    :r => "\u2192",
-    :d => "\u2193",
-    :ne => "\u2197",
-      :ru => "\u2197",
-      :ur => "\u2197",
-    :se => "\u2198",
-      :dr => "\u2198",
-      :rd => "\u2198"
+  LEFT = /^l$/
+  RIGHT = /^r$/
+  UP = /^u$/
+  DOWN = /^d$/
+  NORTH_EAST = /^(:?ne|ru|ur)$/
+  SOUTH_EAST = /^(:?se|rd|dr)$/
+  
+  @@characters = { 
+    :l => "_",
+    :u => "|",
+    :r => "_",
+    :d => "|",
+    :ne => "/",
+      :ru => "/",
+      :ur => "/",
+    :se => "\\",
+      :dr => "\\",
+      :rd => "\\"
   }
   def initialize(grammars,options)
     @grammars = grammars
@@ -30,6 +37,7 @@ class Interpreter
 
   def run 
     display_setup
+    binding.pry
     sky = generate_skyline
   end
 
@@ -38,6 +46,7 @@ class Interpreter
     rule.body.each {|element| tree_root << TreeNode.new(element,rule.id)}
     return tree_root
   end
+
   def generate_skyline
     @probabilites = get_probabilites 
     nt_leafs_only = Proc.new {|n| n.name.is_a? Symbol and n.is_leaf?}
@@ -45,20 +54,13 @@ class Interpreter
     #create tree
     index = pick_random_index {|i| i < @grammar.start_rules.size}
     root_node = create_tree(@grammar.rules[index])
-    #choose next 15
-    #It's not that simple, you have to check how many not terminal
-    #symbols every leaf has, call it x, then you should append
-    #x childs to the given node. It's not that hard but it's not
-    #trivial.
-    count = 0
-    5.times do 
+    #choose next 
+    (@complexity*2).times do 
       root_node.each(nt_leafs_only) do |node|
         next if node == root_node
         index = pick_random_index {|i| node.name == 
                                  @grammar.rules[i].symbol}
         node << create_tree(@grammar.rules[index])
-        count += 1
-        break if count == 10
       end
     end
     #Close open leafs
@@ -68,7 +70,6 @@ class Interpreter
       node << create_tree(@grammar.terminal_rules[index])
     end
     root_node.print_tree
-    binding.pry
   end
   
   def pick_random_index(&block)
@@ -213,5 +214,92 @@ class Interpreter
       acc += rule[:probability]
     end
     ret
+  end
+
+  def print_skyline(str)
+    last_char = nil
+    tree = str.split
+    init_screen
+        row = lines - 2
+        col = 0
+      tree.each do |char|
+        case char
+        when RIGHT
+          if last_char
+            if last_char =~ UP or last_char =~ NORTH_EAST
+              row -= 1 ; col += 1
+            elsif last_char =~ DOWN or last_char =~ SOUTH_EAST
+              col += 1
+            elsif last_char =~ RIGHT
+              col += 1
+            else
+              raise "#{char} after #{last_char} is not supported"
+            end
+          end
+          # setpos row,col; addstr "_"
+        when UP
+          if last_char
+            if last_char =~ UP
+              row -= 1
+            elsif last_char =~ DOWN
+              #nothing
+            elsif last_char =~ RIGHT
+              col += 1
+            elsif last_char =~ NORTH_EAST
+              col += 1 ; row -= 1
+            elsif last_char =~ SOUTH_EAST
+              col += 1
+            else
+              raise "#{char} after #{last_char} is not supported"
+            end
+          end
+          # setpos row,col; addstr "|"
+        when DOWN
+          if last_char
+            if last_char =~ UP
+              #nothing
+            elsif last_char =~ DOWN
+              row += 1
+            elsif last_char =~ RIGHT or last_char =~ SOUTH_EAST
+              col += 1 ; row += 1
+            elsif last_char =~ NORTH_EAST
+              col += 1
+            else
+              raise "#{char} after #{last_char} is not supported"
+            end
+          end
+          # setpos row,col; addstr "|"
+        when NORTH_EAST
+          if last_char
+            if last_char =~ UP
+              row -= 1
+            elsif last_char =~ DOWN
+              row += 1
+            elsif last_char =~ RIGHT or last_char =~ SOUTH_EAST
+              col += 1 
+            else
+              raise "#{char} after #{last_char} is not supported"
+            end
+          end
+
+         when SOUTH_EAST
+          if last_char
+            if last_char =~ UP or last_char =~ NORTH_EAST
+              col += 1
+            elsif last_char =~ DOWN or RIGHT
+              row += 1 ; col += 1
+            else
+              raise "#{char} after #{last_char} is not supported"
+            end
+          end
+          
+        else 
+          raise "#{char} not supported"
+        end
+        setpos row,col ; addstr @@characters[char.to_sym]
+        last_char = char
+      end
+      wait
+    close_screen
   end
 end

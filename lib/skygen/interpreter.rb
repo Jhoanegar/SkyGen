@@ -67,7 +67,7 @@ class Interpreter
     index = pick_random_index {|i| i < @grammar.start_rules.size}
     root_node = create_tree(@grammar.rules[index])
     #choose next 
-    (@complexity*2).times do 
+    (@complexity*10).times do 
       root_node.each(nt_leafs_only) do |node|
         next if node == root_node
         index = pick_random_index {|i| node.name == 
@@ -289,6 +289,8 @@ class Interpreter
               row += 1
             elsif last_char =~ RIGHT or last_char =~ SOUTH_EAST
               col += 1 
+            elsif last_char =~ NORTH_EAST
+              col += 1 ; row -= 1
             else
               raise "#{char} after #{last_char} is not supported"
             end
@@ -310,7 +312,8 @@ class Interpreter
           else 
             raise "#{char} not supported"
           end
-        setpos row,col ; addstr @@characters[char.to_sym]
+        # puts char
+        setpos row,col ; addstr @@characters[char.to_sym] unless char =~ EMPTY
         last_char = char unless char =~ EMPTY
       end
       wait

@@ -111,6 +111,7 @@ class Interpreter
   
   def display_setup
     init_screen
+      stdscr.keypad(true)
       move_print 1,2, "You've selected:"
       move_print 3,4, "Grammar:"
       move_print 5,6, @grammar.name
@@ -127,6 +128,7 @@ class Interpreter
       return grammar unless grammar.nil?
     end
     init_screen
+      stdscr.keypad(true)
       clear
       move_print 2,5, "No grammar selected, #{@grammars.size} available."
       refresh
@@ -144,6 +146,7 @@ class Interpreter
 
   def get_complexity
     init_screen
+      stdscr.keypad(true)
       input = 0
       loop do
         move_print 2,5, "Enter a complexity value:"
@@ -162,6 +165,7 @@ class Interpreter
 
   def print_grammar(name)
     init_screen
+      stdscr.keypad(true)
       col = (cols/3)
       output = ""
       tab = "\t"
@@ -236,6 +240,7 @@ class Interpreter
     last_char = nil
     tree = str.split
     init_screen
+      stdscr.keypad(true)
         setpos 2,0 ; addstr "String: " + str
         setpos 2+(str.size / cols),0 ; addstr "Rules: " + @skyline_rules.join(" ")
         row = lines - 2

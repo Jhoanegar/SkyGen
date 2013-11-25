@@ -1,13 +1,13 @@
-Grammar1:
-  S -> B .1
-  S ::= S r S .2
+a:
+  S -> B 
+  S -> S r S 
   B -> r B 
   B -> B r 
-  B -> u B d
+  B -> u B d .3
   B -> r 
 end
 
-Grammar2:
+b:
   S -> B
   S -> S r S
   B -> r B
@@ -17,3 +17,45 @@ Grammar2:
   B -> r
   B -> e
 end
+
+c:
+  S -> B
+  S -> S r S
+  B -> r B
+  B -> B r
+  B -> u B d
+  B -> r u d r
+  B -> r
+  B -> e
+end
+
+d:
+  S -> B
+  S -> S r S
+  B -> r B
+  B -> B r
+  B -> u B d
+  B -> ne B se
+  B -> r
+  B -> e
+end
+
+e:
+  S -> B
+  S -> S r S
+  B -> r B
+  B -> B r
+  B -> u d
+  B -> ne B se
+  B -> r
+  B -> e
+end
+
+f:
+  S -> B
+  S -> S r S
+  B -> r B
+  B -> B r
+  B -> ne B se .5
+  B -> r
+  B -> e

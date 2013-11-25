@@ -40,7 +40,7 @@ class Interpreter
   end
   def generate_skyline
     @probabilites = get_probabilites 
-    nt_nodes_only = Proc.new {|n| n.name.is_a? Symbol}
+    nt_leafs_only = Proc.new {|n| n.name.is_a? Symbol and n.is_leaf?}
     #choose starting play
     #create tree
     index = pick_random_index {|i| i < @grammar.start_rules.size}
@@ -51,8 +51,8 @@ class Interpreter
     #x childs to the given node. It's not that hard but it's not
     #trivial.
     count = 0
-    10.times do 
-      root_node.each(nt_nodes_only) do |node|
+    5.times do 
+      root_node.each(nt_leafs_only) do |node|
         next if node == root_node
         index = pick_random_index {|i| node.name == 
                                  @grammar.rules[i].symbol}
@@ -62,11 +62,11 @@ class Interpreter
       end
     end
     #Close open leafs
-    # root_node.each_leaf do |node|
-    #   next if node == root_node
-    #   index = Random.rand(0..@grammar.terminal_rules.size-1)
-    #   node << create_tree(@grammar.terminal_rules[index])
-    # end
+    root_node.each(nt_leafs_only) do |node|
+      next if node == root_node
+      index = Random.rand(0..@grammar.terminal_rules.size-1)
+      node << create_tree(@grammar.terminal_rules[index])
+    end
     root_node.print_tree
     binding.pry
   end

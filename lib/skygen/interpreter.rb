@@ -13,6 +13,7 @@ class Interpreter
   RIGHT = /^r$/
   UP = /^u$/
   DOWN = /^d$/
+  EMPTY = /^e$/
   NORTH_EAST = /^(:?ne|ru|ur)$/
   SOUTH_EAST = /^(:?se|rd|dr)$/
   
@@ -37,9 +38,20 @@ class Interpreter
 
   def run 
     display_setup
-    binding.pry
-    sky = generate_skyline
+    loop do 
+      sky = generate_skyline
+      sky_str = sky_to_str(sky)
+      print_skyline(sky_str)
+    end
+    # binding.pry
   end
+
+  def sky_to_str(sky)
+    str = ""
+    sky.each_leaf {|leaf| str << leaf.name + " "}
+    str
+  end
+
 
   def create_tree(rule)
     tree_root = TreeNode.new(rule.symbol,rule.id)
@@ -69,7 +81,7 @@ class Interpreter
       index = Random.rand(0..@grammar.terminal_rules.size-1)
       node << create_tree(@grammar.terminal_rules[index])
     end
-    root_node.print_tree
+    root_node
   end
   
   def pick_random_index(&block)
@@ -292,12 +304,14 @@ class Interpreter
               raise "#{char} after #{last_char} is not supported"
             end
           end
-          
-        else 
-          raise "#{char} not supported"
-        end
+
+          when EMPTY
+            #nothing
+          else 
+            raise "#{char} not supported"
+          end
         setpos row,col ; addstr @@characters[char.to_sym]
-        last_char = char
+        last_char = char unless char =~ EMPTY
       end
       wait
     close_screen

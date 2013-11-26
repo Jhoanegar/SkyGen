@@ -27,4 +27,21 @@ class Tree::TreeNode
     yield self if condition.call(self)
   end
 
+  def print_tree(level = 0,content = "")
+    if is_root?
+      content << "*"
+    else
+      content <<  "|" unless parent.is_last_sibling?
+      content << (' ' * (level - 1) * 2)
+      content << (is_last_sibling? ? "+" : "|")
+      content <<  "---"
+      content << (has_children? ? "+" : ">")
+    end
+
+    content <<  " #{name}\n"
+
+    children { |child| content = child.print_tree(level + 1,content.dup)}
+    return content
+end
+
 end

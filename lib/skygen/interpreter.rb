@@ -82,6 +82,7 @@ class Interpreter
         if i % 25 == 0 and i > 0 then file.print "\n" end
       end
       file.puts
+      file.puts "Generated string:"
       len = 0
       @skyline_chars.each do |char|
         len += char.size + 1
@@ -91,6 +92,9 @@ class Interpreter
         end
         file.print "#{char} "
       end
+      file.puts
+      file.puts "Expression Tree:"
+      file.puts @skyline.print_tree
       file.puts
       file.print "=" * 80
       file.puts

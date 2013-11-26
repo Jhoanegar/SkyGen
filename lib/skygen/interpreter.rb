@@ -44,12 +44,11 @@ class Interpreter
       sky_str = sky_to_str(sky)
       print_skyline(sky_str)
     end
-    # binding.pry
   end
 
   def sky_to_str(sky)
     str = ""
-    sky.each_leaf {|leaf| str << leaf.name + " "}
+    sky.each_leaf {|leaf| str << "#{leaf.name} "}
     str
   end
 
@@ -64,10 +63,9 @@ class Interpreter
     @skyline_rules = []
     @probabilites = get_probabilites 
     nt_leafs_only = Proc.new {|n| n.name.is_a? Symbol and n.is_leaf?}
-    #choose starting play
-    #create tree
     index = pick_random_index {|i| i < @grammar.start_rules.size}
     root_node = create_tree(@grammar.rules[index])
+    @skyline_rules << @grammar.rules[index].id
     #choose next 
     (@complexity*10).times do 
       root_node.each(nt_leafs_only) do |node|
@@ -83,7 +81,7 @@ class Interpreter
       next if node == root_node
       index = Random.rand(0..@grammar.terminal_rules.size-1)
       node << create_tree(@grammar.terminal_rules[index])
-      @skyline_rules << @grammar.rules[index].id
+      @skyline_rules << @grammar.terminal_rules[index].id
     end
     root_node
   end
@@ -327,7 +325,7 @@ class Interpreter
         setpos row,col ; addstr @@characters[char.to_sym] unless char =~ EMPTY
         last_char = char unless char =~ EMPTY
       end
-      wait
+      wait "Press UP/DOWN to increase/decrease the complexity, 's' to save, 'e' to exit."
     close_screen
   end
 end

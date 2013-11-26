@@ -42,7 +42,39 @@ class Interpreter
     loop do 
       sky = generate_skyline
       sky_str = sky_to_str(sky)
-      print_skyline(sky_str)
+      input = print_skyline(sky_str)
+      case input 
+      when KEY_UP
+        increase_complexity
+      when KEY_DOWN
+        decrease_complexity
+      when 's'
+        save_data
+      when 'e'
+        close_program
+      end
+    end
+  end
+
+  def decrease_complexity
+    unless @complexity == 1    
+      @complexity -= 1 
+    else
+      init_screen
+        addstr "Minimum complexity achieved!"
+        wait
+      close_screen
+    end
+  end
+
+ def increase_complexity
+    unless @complexity == 9    
+      @complexity += 1 
+    else
+      init_screen
+        addstr "Maximum complexity achieved!"
+        wait
+      close_screen
     end
   end
 
@@ -67,7 +99,7 @@ class Interpreter
     root_node = create_tree(@grammar.rules[index])
     @skyline_rules << @grammar.rules[index].id
     #choose next 
-    (@complexity*10).times do 
+    (@complexity*5).times do 
       root_node.each(nt_leafs_only) do |node|
         next if node == root_node
         index = pick_random_index {|i| node.name == 
@@ -114,7 +146,7 @@ class Interpreter
       move_print 3,4, "Grammar:"
       move_print 5,6, @grammar.name
       move_print 7,4, "Complexity:"
-      move_print 9,6, complexity_to_s
+      move_print 9,6, "#{@complexity}"
       wait "<Press any key to generate a skyline>" 
     close_screen
   end
@@ -147,14 +179,24 @@ class Interpreter
       stdscr.keypad(true)
       input = 0
       loop do
-        move_print 2,5, "Enter a complexity value:"
-        move_print 3,2, "1) Easy."
-        move_print 4,2, "2) Normal."
-        move_print 5,2, "3) Complex."
-        move_print 6,2, "4) Auto."
+        move_print 2,5, "Enter a complexity value."
+        move_print 4,2, <<-DOC
+  The complexity of a skyline depends on the number of terminal rules as well 
+  as the probability associated with each one. It is very hard to produce a 
+  tree with a given depth since you can't really predict the outcome of the 
+  selected rules (because we are using probabilistic weights to select the 
+  rules) and the algorithm must close all the not terminal nodes adding as 
+  many extra nodes as needed. Hence, the number you enter here, will have 
+  an unpredicted impact in the complexity of the skyline, however, IT WILL 
+  influence its complexity. 
+
+  Finally, don't worry, you will be able to change this number later.
+  
+  "1,2,3,4,5,6,7,8,9 are supported complexities where '1' is simple and '9' is complex."
+DOC
         refresh
-        input = wait("<Enter the selected complexity (1-4)>").to_i
-        break if (1..4).include? input
+        input = wait("<Enter the complexity value>").to_i
+        break if (1..9).include? input
       end
     close_screen
     return input
@@ -239,6 +281,8 @@ class Interpreter
     tree = str.split
     init_screen
       stdscr.keypad(true)
+        comp = "<\\Complexity: #{@complexity}>"
+        setpos 0,cols-comp.size ; addstr comp
         setpos 2,0 ; addstr "String: " + str
         setpos 3+(str.size / cols),0 ; addstr "Rules: " + @skyline_rules.join(" ")
         row = lines - 2
@@ -325,7 +369,8 @@ class Interpreter
         setpos row,col ; addstr @@characters[char.to_sym] unless char =~ EMPTY
         last_char = char unless char =~ EMPTY
       end
-      wait "Press UP/DOWN to increase/decrease the complexity, 's' to save, 'e' to exit."
+      r = wait "Press UP/DOWN to increase/decrease the complexity, 's' to save, 'e' to exit."
     close_screen
+    return r
   end
 end

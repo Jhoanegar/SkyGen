@@ -25,7 +25,7 @@ class OptParse
       opts.on("-c", "--complexity COMPLEXITY",
              "The complexity of the skyline (1-4)",
              "  Example: '1'") do |c|
-             raise OptionParser::InvalidArgument unless (1..4).include? c.to_i
+             raise OptionParser::InvalidArgument unless (1..9).include? c.to_i
              options.complexity = c.to_i
        end
       

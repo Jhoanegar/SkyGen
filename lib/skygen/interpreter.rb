@@ -65,7 +65,7 @@ class Interpreter
 
   def save_data
     File.open(@output_file,"a") do |file|  
-      file.puts "Skyline generated #{Time.now.strftime '%H:%M:%S'}"
+      file.puts "Skyline generated at #{Time.now.strftime '%H:%M:%S'}"
       file.puts "Grammar used:"
       file.puts "  #{@grammar.name}"
       file.puts "Rules:"

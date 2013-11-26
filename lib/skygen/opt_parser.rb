@@ -7,27 +7,37 @@ class OptParse
     options.grammars = ['./grammar.gr']
     options.grammar = nil
     options.complexity = nil
+    options.save_file = './output.txt'
     opt_parser = OptionParser.new do |opts|
       opts.banner = "Usage: #{__FILE__} [CONFIG]"
 
       opts.on("-f", "--file FILE1,FILE2",
-             "Select the FILES that contain the grammars to load.",
-             "  Example: 'grammar.gr,g.txt'") do |log|
-             options.grammars = log.split(/[\s,]/) 
+             "The files that contain the grammars to load.",
+             "  Default: 'grammar.gr") do |file|
+             options.save_file = file
        end
 
       opts.on("-g", "--grammar GRAMMAR_NAME",
-             "Select the grammars to use by the generator.",
-             "  Example: 'Grammar1'") do |g|
+             "The grammars to use by the generator.",
+             "  Default: N/A") do |g|
              options.grammar = g
        end
       
       opts.on("-c", "--complexity COMPLEXITY",
-             "The complexity of the skyline (1-4)",
-             "  Example: '1'") do |c|
+             "The complexity of the skyline (1-9)",
+             "  Default: N/A") do |c|
              raise OptionParser::InvalidArgument unless (1..9).include? c.to_i
              options.complexity = c.to_i
        end
+
+       opts.on("-o", "--output FILE",
+             "The file to save the results",
+             "  Default: 'output.txt'") do |c|
+             raise OptionParser::InvalidArgument unless (1..9).include? c.to_i
+             options.complexity = c.to_i
+       end
+
+
       
     end
 

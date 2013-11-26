@@ -35,13 +35,17 @@ class Interpreter
     @complexity = options.complexity || get_complexity
     @probabilites = nil
     @skyline_rules = []
+    @output_file = options.save_file
+    @skyline = nil
+    @skyline_chars = []
   end
 
   def run 
     display_setup
+    input = ""
     loop do 
-      sky = generate_skyline
-      sky_str = sky_to_str(sky)
+      @skyline = generate_skyline
+      sky_str = sky_to_str(@skyline)
       input = print_skyline(sky_str)
       case input 
       when KEY_UP
@@ -51,9 +55,52 @@ class Interpreter
       when 's'
         save_data
       when 'e'
-        close_program
+        break
+      when 'r'
+        break
       end
     end
+    input
+  end
+
+  def save_data
+    File.open(@output_file,"a") do |file|  
+      file.puts "Skyline generated #{Time.now.strftime '%H:%M:%S'}"
+      file.puts "Grammar used:"
+      file.puts "  #{@grammar.name}"
+      file.puts "Rules:"
+      @grammar.rules.each do |rule|
+        file.puts "(#{rule.id}) #{rule.symbol} => #{rule.body.join(' ')}"
+      end 
+      file.puts "Rules applied: "
+      @skyline_rules.each_with_index do |rule,i|
+        if i != @skyline_rules.size-1
+          file.print "#{rule}->"
+        else
+          file.print "#{rule}"
+        end
+        if i % 25 == 0 and i > 0 then file.print "\n" end
+      end
+      file.puts
+      len = 0
+      @skyline_chars.each do |char|
+        len += char.size + 1
+        if len > 75 
+          file.print "\n"
+          len = 0
+        end
+        file.print "#{char} "
+      end
+      file.puts
+      file.print "=" * 80
+      file.puts
+   end
+   init_screen
+     msg = "Data saved succesfully!"
+     move_print lines/2,((cols/2)- msg.size),msg
+     wait
+   close_screen
+
   end
 
   def decrease_complexity
@@ -277,6 +324,7 @@ DOC
   end
 
   def print_skyline(str)
+    @skyline_chars = []
     last_char = nil
     tree = str.split
     init_screen
@@ -368,8 +416,9 @@ DOC
         # puts char
         setpos row,col ; addstr @@characters[char.to_sym] unless char =~ EMPTY
         last_char = char unless char =~ EMPTY
+        @skyline_chars << char
       end
-      r = wait "Press UP/DOWN to increase/decrease the complexity, 's' to save, 'e' to exit."
+      r = wait "<UP/DOWN adjusts the complexity,'s' saves, 'e' exits,'r' resets>"
     close_screen
     return r
   end

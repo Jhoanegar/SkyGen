@@ -4,7 +4,7 @@ a:
   B -> r B 
   B -> B r 
   B -> u B d .3
-  B -> r 
+  B -> r 0.01 
 end
 
 b:
@@ -59,3 +59,4 @@ f:
   B -> ne B se .5
   B -> r
   B -> e
+end

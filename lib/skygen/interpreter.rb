@@ -242,7 +242,7 @@ class Interpreter
     init_screen
       stdscr.keypad(true)
         setpos 2,0 ; addstr "String: " + str
-        setpos 2+(str.size / cols),0 ; addstr "Rules: " + @skyline_rules.join(" ")
+        setpos 3+(str.size / cols),0 ; addstr "Rules: " + @skyline_rules.join(" ")
         row = lines - 2
         col = 0
       tree.each do |char|
